@@ -1,0 +1,8 @@
+1d/build
+1d/dg_mood_1d
+2d/build
+2d/*.gf
+2d/dg_mood
+*.mesh
+.vscode
+.idea
