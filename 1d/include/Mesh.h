@@ -8,7 +8,7 @@
 #include "ArrayUtils.h"
 #include "Interpolation.h"
 
-class Mesh{
+class Mesh1d{
 private:
 	int mDim = 1;
 	int mNumFaces = 2;
@@ -19,15 +19,15 @@ private:
 	double mXmin, mXmax;
 
 	double mJ;
-	double detJ;
-	double invJ;
+	double mDetJ;
+	double mInvJ;
 
 	Nodes* xnodes;
 	Nodes* xquads;
 
 public:
-	Mesh(int nels, int nn, int nq, double xmin, double xmax);
-	~Mesh();
+	Mesh1d(int nels, int nn, int nq, double xmin, double xmax);
+	~Mesh1d();
 
 	int nn() const;
 	int nq() const;
