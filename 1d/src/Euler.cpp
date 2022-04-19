@@ -46,7 +46,18 @@ DArray Euler::Prim2Cons(DArray &primState){
 	return consState;
 }
 
-// TODO(mjrodriguez): Write Flux function
+DArray Euler::Flux(DArray &state){
+	double rhou_sqrd = state[momx]*state[momx];
+	double p = Pressure(state);
+	DArray F(nstates);
+
+	F[dens] = state[dens];
+	F[momx] = rhou_sqrd/state[dens] + p;
+	F[ener] = (state[ener] + p)*state[momx]/state[dens];
+
+	return F;
+
+}
 
 bool Euler::IsStatePhysical(DArray &state){
 	if (state[dens] < 0){
