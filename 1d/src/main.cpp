@@ -6,6 +6,7 @@
 #include "DGOperators.h"
 #include "Mesh.h"
 #include "Interpolation.h"
+#include "Problems.h"
 
 int main(int argc, char *argv[]){
 
@@ -28,6 +29,8 @@ int main(int argc, char *argv[]){
 	uold(0,2,0) = 3.0;
 	print(uold);
 
+	EulerProblems ep(p,nq,nels,"sod");
+	ep.WhichProblem();
 
 	return 0;
 }

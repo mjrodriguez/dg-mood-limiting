@@ -1,4 +1,6 @@
 #pragma once
+
+#include <set>
 #include <vector>
 #include <string>
 #include <cassert>
@@ -47,12 +49,18 @@ struct Parameters{
 
 class EulerProblems{
 private:
+	int mNeqs = 3;
+	int mOrder, mNnodes, mNquads, mNels;
+	double mGamma = 1.4;
 	std::string mProblem;
+	void mSetProblem();
+	DArray mComputeSodIC();
 public:
 	Mesh1d *mesh;
+	Parameters *params;
 	DArray Uinit;
-	EulerProblems(std::string problem);
+	EulerProblems(int order, int nquads, int nels, std::string problem);
 	~EulerProblems();
-	std::string WhichProblem();
+	void WhichProblem();
 
 };
