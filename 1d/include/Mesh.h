@@ -15,12 +15,14 @@ private:
 	int mNumNodes;
 	int mNumQuads;
 	int mNumEls;
+
 	double mDx;
 	double mXmin, mXmax;
-
 	double mJ;
 	double mDetJ;
 	double mInvJ;
+	
+	DArray mX;
 
 	Nodes* xnodes;
 	Nodes* xquads;
@@ -37,6 +39,7 @@ public:
 	double xmax() const;
 	double xmin() const;
 
+	DArray X() const;
 	double X(int iel, int inode) const;
 
 	double J() const;

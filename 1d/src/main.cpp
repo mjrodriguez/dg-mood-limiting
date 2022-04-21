@@ -7,6 +7,7 @@
 #include "Mesh.h"
 #include "Interpolation.h"
 #include "Problems.h"
+#include "Euler.h"
 
 int main(int argc, char *argv[]){
 
@@ -21,13 +22,12 @@ int main(int argc, char *argv[]){
 
 	Mesh1d M(nels, nn, nq, xmin, xmax);
 	Operators dg(nn,nq);
-	
 	DArray uold(nn, nstates, nels);
 	uold = 0.0;
-	uold(0,0,0) = 1.0;
-	uold(0,1,0) = 2.0;
-	uold(0,2,0) = 3.0;
-	print(uold);
+	uold(0,dens,0) = 1.0;
+	uold(0,momx,0) = 2.0;
+	uold(0,ener,0) = 3.0;
+	// print(uold);
 
 	EulerProblems ep(p,nq,nels,"sod");
 	ep.WhichProblem();

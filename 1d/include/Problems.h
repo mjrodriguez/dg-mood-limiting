@@ -54,7 +54,7 @@ private:
 	double mGamma = 1.4;
 	std::string mProblem;
 	void mSetProblem();
-	DArray mComputeSodIC();
+	void mComputeSodIC();
 public:
 	Mesh1d *mesh;
 	Parameters *params;

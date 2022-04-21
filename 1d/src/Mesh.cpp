@@ -19,6 +19,12 @@ Mesh1d::Mesh1d(int nels, int nn, int nq, double xmin, double xmax){
 	xnodes = new Nodes(nn);
 	xquads = new Nodes(nq);
 
+	mX.alloc(mNumNodes,mNumEls);
+	for (int iel = 0; iel < mNumEls; ++iel){
+		for (int i = 0; i < mNumNodes; ++i){
+			mX(i,iel) = (iel*mDx + mXmin) + xnodes->GetNodes()[i]*mDx;
+		}
+	}
 }
 
 Mesh1d::~Mesh1d(){
@@ -46,6 +52,12 @@ double Mesh1d::xmax() const {
 }
 double Mesh1d::xmin() const{
 	return mXmin;
+}
+
+DArray Mesh1d::X() const{
+	DArray x(mNumNodes,mNumEls);
+	copy(x,mX);
+	return x;
 }
 
 double Mesh1d::X(int iel, int inode) const{
