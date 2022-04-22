@@ -55,6 +55,8 @@ private:
 	std::string mProblem;
 	void mSetProblem();
 	void mComputeSodIC();
+	void mComputeLaxIC();
+	void mComputeShuOsherIC();
 public:
 	Mesh1d *mesh;
 	Parameters *params;
