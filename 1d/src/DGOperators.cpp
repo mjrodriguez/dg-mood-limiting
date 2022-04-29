@@ -96,7 +96,6 @@ void DG::AssembleElement(DArray &u){
     DArray q(params->nnodes, params->neqs);
     DArray U(params->nquads, params->neqs, params->nels);
     DArray F(params->nquads, params->neqs, params->nels); 
-
     for (int iel = 0; iel < params->nels; ++iel){
         // Compute u at the quadrature points
         for (int ieq = 0; ieq < equations->NS(); ++ieq){
@@ -130,14 +129,10 @@ void DG::AssembleElement(DArray &u){
             
         }
 
-        print(q);
-
-
     }
     
 //     std::cout << mesh->J() << std::endl;
 // std::cout << mesh->invJ() << std::endl;
-    // print(F,"Flux at quads");
     // print(u,"u at nodes");
     // print(U,"u at quads");
 }

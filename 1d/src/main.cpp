@@ -13,15 +13,19 @@ int main(int argc, char *argv[]){
 
 	const int p = 4;
 	const int nn = p+1;
-	const int nq  = 3*nn/2;
-	const int nels = 10;
+	const int nq  = nn;
+	const int nels = 2;
 
 	EulerProblems ep(p,nq,nels,"sod");
 	ep.WhichProblem();
 	Euler euler(1.4);
 	DG dg(ep.mesh, ep.params, &euler);
 
+	// print(ep.Uinit);
+
 	dg.AssembleElement(ep.Uinit);
+
+
 
 	return 0;
 }

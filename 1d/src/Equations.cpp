@@ -51,7 +51,7 @@ DArray Euler::Flux(DArray &state){
 	double p = Pressure(state);
 	DArray F(nstates);
 
-	F[dens] = state[dens];
+	F[dens] = state[momx];
 	F[momx] = rhou_sqrd/state[dens] + p;
 	F[ener] = (state[ener] + p)*state[momx]/state[dens];
 
