@@ -1,8 +1,10 @@
-#ifndef DGOPERATORS_H
-#define DGOPERATORS_H
+#pragma once
 
 #include "Array.h"
 #include "Interpolation.h"
+#include "Problems.h"
+#include "Mesh.h"
+#include "Equations.h"
 
 class Operators{
 private:
@@ -31,5 +33,23 @@ public:
 
 };
 
+class DG{
+private:
+    int dim = 1;
+    int neqs;
+    int order;
+    int nels;
+    int nquads;
+public:
+    Operators* op;
+    RiemannSolver* rs;
+    Mesh1d* mesh;
+    Parameters* params;
+    Euler* equations;
 
-#endif
+    DG(Mesh1d *m, Parameters *p, Euler *eqn);
+    ~DG();
+
+    void AssembleElement(DArray &u);
+
+};

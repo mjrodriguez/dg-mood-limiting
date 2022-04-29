@@ -7,7 +7,7 @@
 #include "Mesh.h"
 #include "Interpolation.h"
 #include "Problems.h"
-#include "Euler.h"
+#include "Equations.h"
 
 int main(int argc, char *argv[]){
 
@@ -16,7 +16,10 @@ int main(int argc, char *argv[]){
 	const int nq  = 3*nn/2;
 	const int nels = 10;
 
-	EulerProblems ep(p,nq,nels,"shu-osher");
+	EulerProblems ep(p,nq,nels,"sod");
 	ep.WhichProblem();
+	Euler euler(1.4);
+	DG dg(ep.mesh, ep.params, &euler);
+
 	return 0;
 }

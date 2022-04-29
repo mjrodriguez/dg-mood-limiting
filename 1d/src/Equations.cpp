@@ -1,6 +1,6 @@
 #include <cmath>
 
-#include "Euler.h"
+#include "Equations.h"
 #include "Array.h"
 #include "ArrayUtils.h"
 
@@ -78,4 +78,40 @@ bool Euler::IsStatePhysical(DArray &state){
 	}
 
 	return true;
+}
+
+int Euler::NS() const{
+	return nstates;
+}
+
+RiemannSolver::RiemannSolver(Euler *e){
+	eqn = e;
+
+	std::cout << "RiemannSolver Constructor" << std::endl;
+	std::cout << eqn->NS() << std::endl;
+
+    FL.alloc(eqn->NS());
+    FR.alloc(eqn->NS());
+	FL = 0.0;
+	FR = 0.0;
+
+	print(FL,"FL");
+	print(FR,"FR");
+}
+
+void RiemannSolver::LLF(DArray &stateL, DArray & stateR, DArray &Fhat){
+	assert(eqn->IsStatePhysical(stateL));
+	assert(eqn->IsStatePhysical(stateR));
+
+	double maxL = eqn->MaxVel(stateL);
+	double maxR = eqn->MaxVel(stateR);
+	Cmax = std::max(maxL, maxR); 
+
+	FL = eqn->Flux(stateL);
+	FR = eqn->Flux(stateR);
+
+	// for (int ieq = 0; ieq < eqn->NS(); ++ieq){
+	// 	Fhat[ieq] = 0.5*(FL[ieq] + FR[ieq]) - 0.5*Cmax*(stateR[ieq] - stateL[ieq]);
+	// }
+
 }

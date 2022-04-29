@@ -3,7 +3,7 @@
 
 #include "Problems.h"
 #include "Interpolation.h"
-#include "Euler.h"
+#include "Equations.h"
 
 EulerProblems::EulerProblems(int order, int nquads, int nels, std::string problem){
 	mProblem = problem;

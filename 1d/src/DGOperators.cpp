@@ -81,3 +81,17 @@ DArray Operators::GetInvMassVol() const{
 DArray Operators::GetG() const{
     return I->GetG();
 }
+
+DG::DG(Mesh1d* m, Parameters* p, Euler* eqn){
+    mesh = m;
+    params = p;
+    equations = eqn;
+    
+    op = new Operators(params->nnodes, params->nquads);
+    rs = new RiemannSolver(equations);
+}
+
+DG::~DG(){
+    delete op;
+    delete rs;
+}

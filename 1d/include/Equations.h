@@ -10,13 +10,14 @@
 #define velx 1
 #define pres 2
 
-class Euler{
+class Euler {
 private:
 	double mGamma;
 	int nstates = 3;
 
 public:
 	Euler(double gamma);
+	int NS() const;
 	double Gamma() const;
 	double Pressure(DArray &state);
 	double MaxVel(DArray &state);
@@ -24,4 +25,16 @@ public:
 	DArray Prim2Cons(DArray &primState);
 	DArray Flux(DArray &state);
 	bool IsStatePhysical(DArray &state);
+};
+
+
+class RiemannSolver{
+private:
+    DArray FL;
+    DArray FR;
+    double Cmax;
+	Euler *eqn;
+public:
+    RiemannSolver(Euler *e);
+    void LLF(DArray &stateL, DArray &stateR, DArray &Fhat); 
 };
