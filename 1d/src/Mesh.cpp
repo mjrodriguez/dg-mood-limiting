@@ -16,6 +16,10 @@ Mesh1d::Mesh1d(int nels, int nn, int nq, double xmin, double xmax){
 	mXmax = xmax;
 
 	mDx = (mXmax - mXmin)/(double(mNumEls));
+	mJ = mDx;
+	mDetJ = std::abs(mJ);
+	mInvJ = 1/mJ;
+
 	xnodes = new Nodes(nn);
 	xquads = new Nodes(nq);
 

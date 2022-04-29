@@ -39,12 +39,13 @@ private:
     int mNumOfQuads;
     Nodes* xnodes;
     Nodes* xquads;
-    DArray G;
-    DArray D;
-    DArray W;
 public:
     Interpolation(int numOfNodes, int numOfQuads);
     ~Interpolation();
+
+    DArray G;
+    DArray D;
+    DArray W;
 
     int GetSizeQuads() const;
     int GetSizeNodes() const;

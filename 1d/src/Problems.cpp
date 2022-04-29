@@ -1,4 +1,3 @@
-//TODO(mjrodriguez): Write implementation for EulerProblems
 #include <cassert>
 
 #include "Problems.h"

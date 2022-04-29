@@ -91,6 +91,57 @@ DG::DG(Mesh1d* m, Parameters* p, Euler* eqn){
     rs = new RiemannSolver(equations);
 }
 
+void DG::AssembleElement(DArray &u){
+    DArray Fhat(2, params->neqs);
+    DArray q(params->nnodes, params->neqs);
+    DArray U(params->nquads, params->neqs, params->nels);
+    DArray F(params->nquads, params->neqs, params->nels); 
+
+    for (int iel = 0; iel < params->nels; ++iel){
+        // Compute u at the quadrature points
+        for (int ieq = 0; ieq < equations->NS(); ++ieq){
+            // U = G*u
+            DArray Uq(&U(0,ieq,iel),params->nquads,1);
+            DArray un(&u(0,ieq,iel),params->nnodes,1);
+            matvec(Uq,op->I->G,un);
+        }
+
+        // Compute Flux at quadrature points
+        for (int i = 0; i < params->nquads; ++i){
+            // F = F(U) --> U is computed in previous loop
+            DArray s(params->neqs);
+            DArray Fq(params->neqs);
+            s[0] = U(i,0,iel);
+            s[1] = U(i,1,iel);
+            s[2] = U(i,2,iel);
+
+            Fq = equations->Flux(s);
+            F(i,0,iel) = Fq(0)*mesh->J()*mesh->invJ();
+            F(i,1,iel) = Fq(1)*mesh->J()*mesh->invJ();
+            F(i,2,iel) = Fq(2)*mesh->J()*mesh->invJ();
+        }
+
+        for (int ieq = 0; ieq < params->neqs; ++ieq){
+            // Comptue Volumeterm
+            DArray qslice(&q(0,ieq), params->nnodes,1);
+            DArray Fslice(&F(0,ieq,iel), params->nquads,1);
+
+            matvec(qslice, op->GetVolTerm(),Fslice,false,-1.0,0.0);
+            
+        }
+
+        print(q);
+
+
+    }
+    
+//     std::cout << mesh->J() << std::endl;
+// std::cout << mesh->invJ() << std::endl;
+    // print(F,"Flux at quads");
+    // print(u,"u at nodes");
+    // print(U,"u at quads");
+}
+
 DG::~DG(){
     delete op;
     delete rs;

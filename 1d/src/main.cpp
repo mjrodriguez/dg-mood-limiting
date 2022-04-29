@@ -21,5 +21,7 @@ int main(int argc, char *argv[]){
 	Euler euler(1.4);
 	DG dg(ep.mesh, ep.params, &euler);
 
+	dg.AssembleElement(ep.Uinit);
+
 	return 0;
 }

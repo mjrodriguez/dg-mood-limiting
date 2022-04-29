@@ -10,8 +10,6 @@ class Operators{
 private:
     int mNumOfNodes;
     int mNumOfQuads;
-    Interpolation* I;
-    DArray mass, massChol;
     DArray volumeTerm;
     DArray invMassVol;
 
@@ -21,6 +19,9 @@ private:
 public:
     Operators(int numNodes, int numQuads);
     ~Operators();
+
+    Interpolation* I;
+    DArray mass, massChol;
 
     int Nn() const;
     int Nq() const;
