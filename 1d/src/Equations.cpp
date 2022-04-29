@@ -87,16 +87,10 @@ int Euler::NS() const{
 RiemannSolver::RiemannSolver(Euler *e){
 	eqn = e;
 
-	std::cout << "RiemannSolver Constructor" << std::endl;
-	std::cout << eqn->NS() << std::endl;
-
     FL.alloc(eqn->NS());
     FR.alloc(eqn->NS());
 	FL = 0.0;
 	FR = 0.0;
-
-	print(FL,"FL");
-	print(FR,"FR");
 }
 
 void RiemannSolver::LLF(DArray &stateL, DArray & stateR, DArray &Fhat){
@@ -110,8 +104,8 @@ void RiemannSolver::LLF(DArray &stateL, DArray & stateR, DArray &Fhat){
 	FL = eqn->Flux(stateL);
 	FR = eqn->Flux(stateR);
 
-	// for (int ieq = 0; ieq < eqn->NS(); ++ieq){
-	// 	Fhat[ieq] = 0.5*(FL[ieq] + FR[ieq]) - 0.5*Cmax*(stateR[ieq] - stateL[ieq]);
-	// }
+	for (int ieq = 0; ieq < eqn->NS(); ++ieq){
+		Fhat[ieq] = 0.5*(FL[ieq] + FR[ieq]) - 0.5*Cmax*(stateR[ieq] - stateL[ieq]);
+	}
 
 }
