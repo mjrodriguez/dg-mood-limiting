@@ -215,9 +215,12 @@ void DG::AssembleElement(DArray &u){
 
             }
 
-            q(0,ieq) -= Fhat(0,ieq);
-            q(params->nnodes-1,ieq) += Fhat(1,ieq);
+            qslice[0] -= Fhat(0,ieq);
+            qslice[params->nnodes-1] += Fhat(1,ieq);
 
+            cholsolve(qslice,op->GetCholMass());
+
+            // print(qslice);
         }
 
         print(q); 

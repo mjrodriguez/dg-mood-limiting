@@ -23,7 +23,10 @@ int main(int argc, char *argv[]){
 
 	// print(ep.Uinit);
 
-	dg.AssembleElement(ep.Uinit);
+	DArray uc(ep.Uinit.size());
+	uc = 1.0;
+
+	dg.AssembleElement(uc);
 
 
 
