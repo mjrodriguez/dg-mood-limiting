@@ -86,9 +86,12 @@ void EulerProblems::mComputeSodIC(){
 	// Converting left bc from prim to conservative
 	DArray pleftBC(params->leftBC.data(),mNeqs);
 	DArray cleftBC = euler.Prim2Cons(pleftBC);
+
+	for (int i = 0; i < params->neqs; ++i){params->leftBC[i] = cleftBC[i];}
 	// Converting right bc from prim to conservative
 	DArray prightBC(params->rightBC.data(),mNeqs);
 	DArray crightBC = euler.Prim2Cons(prightBC);
+	for (int i = 0; i < params->neqs; ++i){params->rightBC[i] = crightBC[i];}
 
 	for (int iel = 0; iel < mNels; ++iel){
 		DArray X = mesh->X();

@@ -126,9 +126,101 @@ void DG::AssembleElement(DArray &u){
             DArray Fslice(&F(0,ieq,iel), params->nquads,1);
 
             matvec(qslice, op->GetVolTerm(),Fslice,false,-1.0,0.0);
-            
+
+            // Compute Numerical Fluxes
+            if (iel == 0){
+                DArray ul(params->leftBC.data(),params->neqs); // ul will in conservative vars
+                DArray ur(params->neqs);
+                DArray Fs(params->neqs);
+
+                // Computing interface flux at left face of first element 
+                ur[0] = u(0,0,iel);
+                ur[1] = u(0,1,iel);
+                ur[2] = u(0,2,iel);
+
+                rs->LLF(ul,ur,Fs);
+                Fhat(0,ieq) = Fs(ieq);
+
+                // Computinig interface flux at right face of first element
+                ul[0] = u(params->nnodes-1,0,iel);
+                ul[1] = u(params->nnodes-1,1,iel);
+                ul[2] = u(params->nnodes-1,2,iel);
+
+                ur[0] = u(0,0,iel+1);
+                ur[1] = u(0,1,iel+1);
+                ur[2] = u(0,2,iel+1);
+
+                rs->LLF(ul,ur,Fs);
+                Fhat(1,ieq) = Fs(ieq);
+
+            }
+            else if (iel == params->nels-1){
+                DArray ul(params->neqs);
+                DArray ur(params->neqs);
+                DArray Fs(params->neqs);
+
+                // Computing interface flux at left face of last element
+                ul[0] = u(params->nnodes-1,0,iel-1);
+                ul[1] = u(params->nnodes-1,1,iel-1);
+                ul[2] = u(params->nnodes-1,2,iel-1);
+
+                ur[0] = u(0,0,iel);
+                ur[1] = u(0,1,iel);
+                ur[2] = u(0,2,iel);
+                
+                rs->LLF(ul,ur,Fs);
+                Fhat(0,ieq) = Fs(ieq);
+
+                // Computinig interface flux at right face
+                ul[0] = u(params->nnodes-1,0,iel);
+                ul[1] = u(params->nnodes-1,1,iel);
+                ul[2] = u(params->nnodes-1,2,iel);
+
+                ur[0] = params->rightBC[0];
+                ur[1] = params->rightBC[1];
+                ur[2] = params->rightBC[2];
+
+                rs->LLF(ul,ur,Fs);
+                Fhat(1,ieq) = Fs(ieq);
+
+            }
+            else {
+                DArray ul(params->neqs);
+                DArray ur(params->neqs);
+                DArray Fs(params->neqs);
+
+                // Computing interface flux at left face
+                ul[0] = u(params->nnodes-1,0,iel-1);
+                ul[1] = u(params->nnodes-1,1,iel-1);
+                ul[2] = u(params->nnodes-1,2,iel-1);
+
+                ur[0] = u(0,0,iel);
+                ur[1] = u(0,1,iel);
+                ur[2] = u(0,2,iel);
+                
+                rs->LLF(ul,ur,Fs);
+                Fhat(0,ieq) = Fs(ieq);
+
+                // Computinig interface flux at right face
+                ul[0] = u(params->nnodes-1,0,iel);
+                ul[1] = u(params->nnodes-1,1,iel);
+                ul[2] = u(params->nnodes-1,2,iel);
+
+                ur[0] = u(0,0,iel+1);
+                ur[1] = u(0,1,iel+1);
+                ur[2] = u(0,2,iel+1);
+
+                rs->LLF(ul,ur,Fs);
+                Fhat(1,ieq) = Fs(ieq);
+
+            }
+
+            q(0,ieq) -= Fhat(0,ieq);
+            q(params->nnodes-1,ieq) += Fhat(1,ieq);
+
         }
 
+        print(q); 
     }
     
 //     std::cout << mesh->J() << std::endl;
