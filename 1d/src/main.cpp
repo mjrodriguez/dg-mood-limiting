@@ -23,11 +23,13 @@ int main(int argc, char *argv[]){
 
 	// print(ep.Uinit);
 
-	DArray uc(ep.Uinit.size());
+	DArray uc(ep.Uinit.size()), q(ep.Uinit.size());
 	uc = 1.0;
 
-	dg.AssembleElement(uc);
-
+	// print(uc);
+	// dg.AssembleElement(ep.Uinit);
+	q = dg.AssembleElement(uc);
+	print(q, "q");
 
 
 	return 0;

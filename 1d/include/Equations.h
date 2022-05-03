@@ -27,14 +27,3 @@ public:
 	bool IsStatePhysical(DArray &state);
 };
 
-
-class RiemannSolver{
-private:
-    DArray FL;
-    DArray FR;
-    double Cmax;
-	Euler *eqn;
-public:
-    RiemannSolver(Euler *e);
-    void LLF(DArray &stateL, DArray &stateR, DArray &Fhat); 
-};

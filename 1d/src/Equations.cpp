@@ -21,7 +21,7 @@ double Euler::Pressure(DArray &state){
 
 double Euler::MaxVel(DArray &state){
 	double p = Pressure(state);
-	double sound = std::sqrt( Gamma()*pres / state[dens]); 
+	double sound = std::sqrt( Gamma()*p / state[dens]); 
 	double vel = std::sqrt( state[momx]*state[momx]/state[dens]/state[dens] );
 
 	return vel + sound;
@@ -82,30 +82,4 @@ bool Euler::IsStatePhysical(DArray &state){
 
 int Euler::NS() const{
 	return nstates;
-}
-
-RiemannSolver::RiemannSolver(Euler *e){
-	eqn = e;
-
-    FL.alloc(eqn->NS());
-    FR.alloc(eqn->NS());
-	FL = 0.0;
-	FR = 0.0;
-}
-
-void RiemannSolver::LLF(DArray &stateL, DArray & stateR, DArray &Fhat){
-	assert(eqn->IsStatePhysical(stateL));
-	assert(eqn->IsStatePhysical(stateR));
-
-	double maxL = eqn->MaxVel(stateL);
-	double maxR = eqn->MaxVel(stateR);
-	Cmax = std::max(maxL, maxR); 
-
-	FL = eqn->Flux(stateL);
-	FR = eqn->Flux(stateR);
-
-	for (int ieq = 0; ieq < eqn->NS(); ++ieq){
-		Fhat[ieq] = 0.5*(FL[ieq] + FR[ieq]) - 0.5*Cmax*(stateR[ieq] - stateL[ieq]);
-	}
-
 }

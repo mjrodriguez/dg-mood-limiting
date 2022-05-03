@@ -88,12 +88,11 @@ DG::DG(Mesh1d* m, Parameters* p, Euler* eqn){
     equations = eqn;
     
     op = new Operators(params->nnodes, params->nquads);
-    rs = new RiemannSolver(equations);
 }
 
-void DG::AssembleElement(DArray &u){
+DArray DG::AssembleElement(DArray &u){
     DArray Fhat(2, params->neqs);
-    DArray q(params->nnodes, params->neqs);
+    DArray q(params->nnodes, params->neqs, params->nels);
     DArray U(params->nquads, params->neqs, params->nels);
     DArray F(params->nquads, params->neqs, params->nels); 
     for (int iel = 0; iel < params->nels; ++iel){
@@ -104,7 +103,6 @@ void DG::AssembleElement(DArray &u){
             DArray un(&u(0,ieq,iel),params->nnodes,1);
             matvec(Uq,op->I->G,un);
         }
-
         // Compute Flux at quadrature points
         for (int i = 0; i < params->nquads; ++i){
             // F = F(U) --> U is computed in previous loop
@@ -120,10 +118,12 @@ void DG::AssembleElement(DArray &u){
             F(i,2,iel) = Fq(2)*mesh->J()*mesh->invJ();
         }
 
+        // print(DArray (&F(0,0,iel),params->nquads, params->neqs),"F");
+
         for (int ieq = 0; ieq < params->neqs; ++ieq){
             // Comptue Volumeterm
-            DArray qslice(&q(0,ieq), params->nnodes,1);
-            DArray Fslice(&F(0,ieq,iel), params->nquads,1);
+            DArray qslice(&q(0,ieq, iel), params->nnodes,1);
+            DArray Fslice(&F(0,ieq, iel), params->nquads,1);
 
             matvec(qslice, op->GetVolTerm(),Fslice,false,-1.0,0.0);
 
@@ -138,8 +138,8 @@ void DG::AssembleElement(DArray &u){
                 ur[1] = u(0,1,iel);
                 ur[2] = u(0,2,iel);
 
-                rs->LLF(ul,ur,Fs);
-                Fhat(0,ieq) = Fs(ieq);
+                RiemannSolver(ul,ur,Fs);
+                Fhat(0,ieq) = Fs[ieq];
 
                 // Computinig interface flux at right face of first element
                 ul[0] = u(params->nnodes-1,0,iel);
@@ -150,8 +150,9 @@ void DG::AssembleElement(DArray &u){
                 ur[1] = u(0,1,iel+1);
                 ur[2] = u(0,2,iel+1);
 
-                rs->LLF(ul,ur,Fs);
-                Fhat(1,ieq) = Fs(ieq);
+                RiemannSolver(ul,ur,Fs);
+                Fhat(1,ieq) = Fs[ieq];
+
 
             }
             else if (iel == params->nels-1){
@@ -168,8 +169,8 @@ void DG::AssembleElement(DArray &u){
                 ur[1] = u(0,1,iel);
                 ur[2] = u(0,2,iel);
                 
-                rs->LLF(ul,ur,Fs);
-                Fhat(0,ieq) = Fs(ieq);
+                RiemannSolver(ul,ur,Fs);
+                Fhat(0,ieq) = Fs[ieq];
 
                 // Computinig interface flux at right face
                 ul[0] = u(params->nnodes-1,0,iel);
@@ -180,9 +181,10 @@ void DG::AssembleElement(DArray &u){
                 ur[1] = params->rightBC[1];
                 ur[2] = params->rightBC[2];
 
-                rs->LLF(ul,ur,Fs);
-                Fhat(1,ieq) = Fs(ieq);
+                RiemannSolver(ul,ur,Fs);
+                Fhat(1,ieq) = Fs[ieq];
 
+                print(Fhat, "fhat");
             }
             else {
                 DArray ul(params->neqs);
@@ -198,8 +200,8 @@ void DG::AssembleElement(DArray &u){
                 ur[1] = u(0,1,iel);
                 ur[2] = u(0,2,iel);
                 
-                rs->LLF(ul,ur,Fs);
-                Fhat(0,ieq) = Fs(ieq);
+                RiemannSolver(ul,ur,Fs);
+                Fhat(0,ieq) = Fs[ieq];
 
                 // Computinig interface flux at right face
                 ul[0] = u(params->nnodes-1,0,iel);
@@ -210,8 +212,8 @@ void DG::AssembleElement(DArray &u){
                 ur[1] = u(0,1,iel+1);
                 ur[2] = u(0,2,iel+1);
 
-                rs->LLF(ul,ur,Fs);
-                Fhat(1,ieq) = Fs(ieq);
+                RiemannSolver(ul,ur,Fs);
+                Fhat(1,ieq) = Fs[ieq];
 
             }
 
@@ -223,16 +225,48 @@ void DG::AssembleElement(DArray &u){
             // print(qslice);
         }
 
-        print(q); 
     }
     
+    scale(q,-1.0/mesh->detJ());
+    // print(q, "q: "); 
 //     std::cout << mesh->J() << std::endl;
 // std::cout << mesh->invJ() << std::endl;
     // print(u,"u at nodes");
     // print(U,"u at quads");
+
+    return q;
 }
 
 DG::~DG(){
     delete op;
-    delete rs;
+}
+
+
+void DG::RiemannSolver(DArray &stateL, DArray &stateR, DArray &Fhat){
+
+    if (params->riemannSolver == "llf"){
+        LLF(stateL, stateR, Fhat);
+    }
+}
+
+void DG::LLF(DArray &stateL, DArray & stateR, DArray &Fhat){
+	assert(equations->IsStatePhysical(stateL));
+	assert(equations->IsStatePhysical(stateR));
+
+	double maxL = equations->MaxVel(stateL);
+	double maxR = equations->MaxVel(stateR);
+	double Cmax = std::max(maxL, maxR); 
+
+	DArray FL(params->neqs), FR(params->neqs);
+    FL = equations->Flux(stateL);
+    scale(FL,mesh->J()*mesh->invJ());
+
+	FR = equations->Flux(stateR);
+    scale(FR,mesh->J()*mesh->invJ());
+
+	for (int ieq = 0; ieq < equations->NS(); ++ieq){
+		Fhat[ieq] = 0.5*(FL[ieq] + FR[ieq]) - 0.5*Cmax*(stateR[ieq] - stateL[ieq]);
+	}
+
+
 }

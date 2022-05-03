@@ -43,7 +43,6 @@ private:
     int nquads;
 public:
     Operators* op;
-    RiemannSolver* rs;
     Mesh1d* mesh;
     Parameters* params;
     Euler* equations;
@@ -51,6 +50,9 @@ public:
     DG(Mesh1d *m, Parameters *p, Euler *eqn);
     ~DG();
 
-    void AssembleElement(DArray &u);
+    DArray AssembleElement(DArray &u);
+
+    void RiemannSolver(DArray &stateL, DArray &stateR, DArray &Fhat);
+    void LLF(DArray &stateL, DArray &stateR, DArray &Fhat); 
 
 };
