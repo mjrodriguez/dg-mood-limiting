@@ -1,0 +1,59 @@
+
+%MATH CHARACTER COMMANDS: Short hand for commands
+\def\N{\mathbb{N}}		 				%Natual Bold Face: \N is now the command for the Natural Numbers
+\def\Q{\mathbb{Q}} 						%Rational Bold Face: \R
+\def\R{\mathbb{R}} 						%Real Bold Face
+\def\Z{\mathbb{Z}} 						%Integers Bold Face
+\def\C{\mathbb{C}} 						%Complex Bold Face
+\def\eps{\varepsilon}                                               % Defines \varepsilon to \eps
+\renewcommand{\qedsymbol}{$\blacksquare$} % QED symbol
+
+\def\L{\mathcal{L}}
+\def\boldy{\boldsymbol{y}}
+\def\boldx{\boldsymbol{x}}
+\def\boldF{\boldsymbol{F}}
+\def\boldu{\boldsymbol{u}}
+\def\boldv{\boldsymbol{v}}
+\def\boldn{\boldsymbol{n}}
+\def\boldN{\boldsymbol{N}}
+\def\boldU{\boldsymbol{U}}
+\def\boldR{\boldsymbol{R}}
+\def\boldr{\boldsymbol{r}}
+\def\boldq{\boldsymbol{q}}
+\def\boldi{\boldsymbol{i}}
+
+\def\boldalpha{\boldsymbol{\alpha}}
+\def\boldtheta{\boldsymbol{\theta}}
+\def\boldxi{\boldsymbol{\xi}}
+
+\def\diag{\text{diag}}
+\def\fluxone{\widehat{\widetilde{\boldsymbol{F}}}_1}
+\def\fluxtwo{\widehat{\widetilde{\boldsymbol{F}}}_2}
+\def\dt{\Delta t}
+\def\jacobian{(\nabla_{\boldy} \boldf_n)}
+\def\hessian{\left(\boldsymbol{H}_{\boldy}(\boldf)\right)_n}
+\def\dtjacobian{ \frac{\left(\nabla_{\boldy} \boldf_n\right) }{\partial t} }
+\newcommand*\widefbox[1]{\fbox{\hspace{2em}#1\hspace{2em}}}
+\DeclareMathOperator{\arcsinh}{arcsinh}
+
+%Solution template with little sideways triangle
+\declaretheoremstyle[
+spaceabove=6pt, spacebelow=6pt,
+headfont=\normalfont\bfseries,
+notefont=\mdseries, notebraces={(}{)},
+bodyfont=\normalfont,
+postheadspace=1em
+]{exstyle}
+
+\declaretheoremstyle[
+spaceabove=6pt, spacebelow=6pt,
+headfont=\normalfont\bfseries,
+notefont=\mdseries, notebraces={(}{)},
+bodyfont=\normalfont,
+postheadspace=1em,
+headpunct={},
+qed=$\blacktriangleleft$,
+numbered=no
+]{solstyle}
+\declaretheorem[style=exstyle]{exercise}
+\declaretheorem[style=solstyle]{solution}

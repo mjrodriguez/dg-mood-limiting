@@ -6,3 +6,12 @@
 *.mesh
 .vscode
 .idea
+notes/*.aux
+notes/*.out
+notes/*.bbl
+notes/*.dvi
+notes/*.blg
+notes/*.fls
+notes/*.fdb_latexmk
+notes/*.log
+notes/project.synctex.gz

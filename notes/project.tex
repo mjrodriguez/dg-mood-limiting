@@ -1,0 +1,92 @@
+% Martin Rodriguez Jr.
+% SID: 811958765
+
+
+%Anything following a % sign is a comment.
+%Please use the comments to help you understand the code below.
+
+%%%%%%%%%%%% Quick Notes %%%%%%%%%%%%%%%%%%%%%%
+
+% \textit{} ==> italicises words or phrases
+% \textbf{} ==> bolds words or phrases
+% \\ ==> creates a new line
+% \S ==> creates section section symbol, fancy double s thing
+% \renewcommand{\baselinest8retch}{2} ==> double spaces the document
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[11pt]{article}
+
+%LOAD VARIOUS PACKAGES
+\usepackage{setspace}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{graphics, latexsym, multicol}		%
+\usepackage{graphicx}
+\usepackage{lscape}
+
+\usepackage{amsmath, amsfonts, amsthm, amssymb}		%Math packages provided by American Math Society (AMS)
+\usepackage{thmtools}
+
+\usepackage{xcolor}							%Extended color package: provides colors for text enhancement
+%\usepackage[margin = 1.00in, top = 1in, bottom = 1in, nohead] {geometry}
+\usepackage{boxedminipage}					%allows use of boxed minipages
+\usepackage{enumitem}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+}
+
+\usepackage[english]{babel}
+\usepackage{xcolor} % Required for specifying custom colors
+\usepackage{ulem}
+\usepackage{fix-cm}
+% \usepackage[ruled,vlined]{algorithm2e}
+\usepackage{algorithm, algorithmic}
+% Include macros file
+\input{macros.tex}
+
+\title{MOOD limiting for high-order discontinuous Galerkin methods}
+\date{\today}
+\author{Martin Rodriguez ~~~ Dongwook Lee \\ {\small Department of Applied Mathematics,  University of California, Santa Cruz} \\[11pt] Will Pazner \\ {\small Center for Applied Scientific Computing, Lawrence Livermore National Laboratory} }
+
+\usepackage{setspace}
+
+\begin{document}
+\maketitle
+
+\onehalfspacing
+
+\section{Introduction}
+
+
+One of the current issues with discontinuous Galerkin (DG) methods arises at discontinuities in the solution. The discontinuities cause unwanted oscillations and need to be dampened through classic limiting methods used finite volume (FV) methods or aritificial diffusion. In \cite{qiu2005comparison} they present a comparison of different ways to identify troubled cells and use a WENO limiter.
+
+Biswas et al. \cite{biswas1994parallel} present a way to systematically cascade through the modes of the solution and \cite{krivodonova2007limiters} presents an updated version of the method. Another similar approach is to use multi-dimensional optimal order detection (MOOD) which is used to cascade through the desired polynomial orders. This method was first introduced in \cite{clainavery} and improved in \cite{diot2012improved}. Dumbser et al. \cite{dumbser2014posteriori} have introduced a subcell MOOD limiting method that uses the element nodes as cell-centered values and use a WENO reconstuction to obtain a high-order method.  
+
+Recently, \cite{bourgeois2021gp} used a GP-MOOD method for posteriori limiting on a small amount of cells. The GP-MOOD method uses a series of criteria to identify troubled cells and use a GP reconstruction to compute a lower order method before reducing to a first order Godunov method. We plan on adopting the criteria check to identify troubled cells and then cascade through the modes of the solution until we identify an acceptable solution or reaching a constant (zeroth order polynomial) solution. 
+
+\section{Basic Methodology}
+
+\begin{enumerate}
+    \item Compute unlimited nodal solution $\boldu$ and modal solution $\hat{\boldu} = V^{-1} \boldu$, $V$ is the Legendre polynomial Vandermonde matrix.
+    \item Compute cell-center averages $\bar{\boldu}$.
+    \item Perform the PAD, NAD, and DMP criteria check.
+    \begin{enumerate}
+        \item If it does not pass then truncate the highest mode in the solution and reperform check. 
+    \end{enumerate}
+    \item Perform the strong compressibility and shocks check.
+    \begin{enumerate}
+        \item If it does not pass then truncate the highest mode in the solution and reperform check. 
+    \end{enumerate}
+    \item If it meets both of these criteria then accept solution and recompute the nodal solution $\boldu = V\hat{\boldu}$.
+\end{enumerate}
+
+
+\bibliographystyle{plain}
+\bibliography{dgm-refz.bib}
+
+
+\end{document}
