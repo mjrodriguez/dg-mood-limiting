@@ -94,6 +94,34 @@ The criteria are as follows:
     \item Relaxed DMP criteria: plateau + DMP + u2
 \end{enumerate}
 
+\begin{algorithm}
+    \caption{DG MOOD limiting process.}
+    \label{alg:mood}
+    \begin{algorithmic}[1]
+        \STATE Compute unlimited nodal solution $\boldu$.
+        \STATE Compute cell-centered average solution $\bar{\boldu}$.
+        \STATE Compute modal solution $\hat{\boldu} = V^{-1} \boldu$, where $V$ is the Legendre polynomial Vandermonde matrix.
+        \STATE Current highest mode $i_m = n_n$.
+        \WHILE{Unstable solution}
+            \IF{PAD or CAD Fail}
+                \STATE Truncate modal solution $\hat{\boldu}(i_m) = 0$.
+                \STATE Compute new cell-centered average solution.
+                \STATE Update current highest mode, $i_m = i_m - 1$
+            \ENDIF
+            
+            \IF{Strong compressibility or shocks}
+                \IF{$\bar{\boldu}$ does not satisfy DMP criteria}
+                    \STATE Truncate modal solution $\hat{\boldu}(i_m) = 0$.
+                    \STATE Compute new cell-centered average solution.
+                    \STATE Update current highest mode, $i_m = i_m - 1$
+                \ENDIF
+            \ENDIF
+        \ENDWHILE
+        \STATE Truncated modal solution has been accepted.
+        \STATE Compute nodal solution $\boldu = V\hat{\boldu}.$
+    \end{algorithmic}
+\end{algorithm}
+
 % \begin{enumerate}
 %     \item Compute unlimited nodal solution $\boldu$ and modal solution $\hat{\boldu} = V^{-1} \boldu$, $V$ is the Legendre polynomial Vandermonde matrix.
 %     \item Compute cell-center averages $\bar{\boldu}$.
